@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(showText()));
 }
 
@@ -16,5 +17,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::showText()
 {
+
     ui->textBrowser->setText("Вставте картку");
 }
