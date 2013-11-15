@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("blabladb");
+    db.setDatabaseName("bankdb");
 
     MainWindow w;
     w.connectionSuccessful = db.open();
