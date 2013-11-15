@@ -3,7 +3,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    connectionSuccessful(false)
 {
     ui->setupUi(this);
 
@@ -17,6 +18,5 @@ MainWindow::~MainWindow()
 
 void MainWindow::showText()
 {
-
     ui->textBrowser->setText("Вставте картку");
 }
