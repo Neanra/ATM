@@ -17,9 +17,6 @@ public:
 
     bool connectionSuccessful;
 
-private slots:
-    void on_pushButton_clicked();
-
 private:
     Ui::MainWindow *ui;
 public slots:
