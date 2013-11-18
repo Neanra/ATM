@@ -4,8 +4,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    _connected_atm(NULL),
-    connectionSuccessful(false)
+    _connected_atm(NULL)
 {
     ui->setupUi(this);
 
@@ -20,6 +19,16 @@ MainWindow::~MainWindow()
 void MainWindow::showText(QString text)
 {
     ui->textBrowser->setText(text);
+}
+
+void MainWindow::enableInput()
+{
+    this->ui->inputField->setEnabled(true);
+}
+
+void MainWindow::disableInput()
+{
+    this->ui->inputField->setEnabled(false);
 }
 
 void MainWindow::on_enterBtn_clicked()

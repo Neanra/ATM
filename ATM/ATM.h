@@ -26,6 +26,8 @@ public:
     virtual void disconnect() = 0;
     // Output text to the display
     virtual void showText(QString text) = 0;
+    virtual void enableInput() = 0;
+    virtual void disableInput() = 0;
 };
 
 class ATM

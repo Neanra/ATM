@@ -16,7 +16,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    bool connectionSuccessful;
 
 private:
     Ui::MainWindow *ui;
@@ -26,18 +25,24 @@ public:
     {
         _connected_atm = const_cast<ATM*>(&atm);
 #ifndef NDEBUG
-        showText("DEBUG: ATM connected");
+        //showText("DEBUG: ATM connected");
 #endif
     }
     inline void disconnect()
     {
         _connected_atm = NULL;
 #ifndef NDEBUG
-        showText("DEBUG: ATM disconnected");
+        //showText("DEBUG: ATM disconnected");
 #endif
     }
 
     void showText(QString text);
+
+    void enableInput();
+
+
+    void disableInput();
+
 private slots:
     void on_enterBtn_clicked();
     void on_switchBtn_clicked();

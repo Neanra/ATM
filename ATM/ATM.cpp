@@ -54,7 +54,6 @@ void ATM::processInput(QString input)
     {
         case POWER_OFF:
         //case LOADING:
-        //case WE_DONT_WANT_YOUR_FUCKING_INPUT: :)
             // Ignore
             break;
         case NO_CARD:
@@ -137,7 +136,7 @@ void ATM::onCardInserted(QString cardNumber)
     }
     else
     {
-        // Oh shit!
+        //Connection failed
 #ifndef NDEBUG
         displayText("ERROR: Failed to open a connection to "BANK_DATABASE_NAME);
         // TODO: Output what went wrong exactly using QSqlDatabase::lastError()
@@ -165,6 +164,7 @@ void ATM::powerOn()
     // TODO: Add any initialization logic here.
     _state = NO_CARD;
     displayText("Please insert your card");
+    _display->enableInput();
 }
 
 
@@ -182,4 +182,5 @@ void ATM::powerOff()
         _database.close();
     }
     _state = POWER_OFF;
+    _display->disableInput();
 }
