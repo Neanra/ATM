@@ -4,11 +4,12 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    _connected_atm(NULL),
     connectionSuccessful(false)
 {
     ui->setupUi(this);
 
-    QObject::connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(showText()));
+    QObject::connect(ui->powerBtn, SIGNAL(clicked()), this, SLOT(on_switchBtn_clicked()));
 }
 
 MainWindow::~MainWindow()
@@ -16,7 +17,26 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::showText()
+void MainWindow::showText(QString text)
 {
-    ui->textBrowser->setText("Вставте картку");
+    ui->textBrowser->setText(text);
+}
+
+void MainWindow::on_enterBtn_clicked()
+{
+    _connected_atm->processInput(ui->inputField->text());
+}
+
+void MainWindow::on_switchBtn_clicked()
+{
+    if(_connected_atm->isOn())
+    {
+        _connected_atm->powerOff();
+        ui->powerBtn->setText("Turn ON");
+    }
+    else
+    {
+        _connected_atm->powerOn();
+        ui->powerBtn->setText("Turn OFF");
+    }
 }

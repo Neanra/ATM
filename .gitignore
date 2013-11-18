@@ -21,3 +21,7 @@ qrc_*.cpp
 Makefile
 *-build-*
 /build-*/
+
+# Ignore changes to default database file, unless forced
+# (Use force with caution, Luke, as *.db is binary, and so each version will be kept in the repo as a whole.)
+/ATM/bank.db
