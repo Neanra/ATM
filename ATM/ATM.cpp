@@ -16,16 +16,17 @@ const QString ATM::EJECT_ERR_FAIL    = "Sorry! An error occured during processin
 //==========
 // Templates for common SQL queries
 const QString ATM::SELECT_CARD_BY_NUMBER = \
-    "SELECT cards.active, cards.pin, clients.last_name, clients.gender_male \
+    "SELECT cards.active, cards.pin, cards.balance, clients.last_name, clients.gender_male \
     FROM cards INNER JOIN clients ON cards.client_id=clients.id \
     WHERE cards.card_number=\"%1\"";
 //const QString DEACTIVATE_CARD = ...;
 //const QString UPDATE_CARD_BALANCE = ...;
 //etc.
 
-ATM::ATM (IDisplay* display):
+ATM::ATM (IDisplay* display, IDisplay* printer):
     _state(POWER_OFF),
     _display(display),
+    _printer(printer),
     _database(QSqlDatabase::addDatabase(BANK_DATABASE_DRIVER)),
     _current_card(NULL)
 {
@@ -118,8 +119,8 @@ void ATM::onCardInserted(QString cardNumber)
 
         // TODO: Dispose of temporary variables: they were added for clarity.
         QString cardsPin = query.value(1).toString();           // cards.pin
-        QString clientsLastName = query.value(2).toString();    // clients.last_name
-        bool clientsGenderMale = query.value(3).toBool();       // clients.gender_male
+        QString clientsLastName = query.value(3).toString();    // clients.last_name
+        bool clientsGenderMale = query.value(4).toBool();       // clients.gender_male
 
         _current_card = new Card();
         _current_card->_card_number = cardNumber;
@@ -183,4 +184,29 @@ void ATM::powerOff()
     }
     _state = POWER_OFF;
     _display->disableInput();
+}
+
+void ATM::showBalance(QString cardNumber)
+{
+    if(_database.open())
+    {
+        QSqlQuery query(SELECT_CARD_BY_NUMBER.arg(cardNumber), _database);
+        if(!query.isActive())
+        {
+            // TODO: Panic. Failed to execute query.
+#ifndef NDEBUG
+            onCardEjected(query.lastError().text());
+#else
+            onCardEjected(EJECT_ERR_FAIL);
+#endif
+            return;
+        }
+
+        // TODO: Add any finalization logic here.
+        _display->showText("Your balance: ");
+
+        int cardBalance = query.value(2).toInt(); // cards.balance
+        _current_card->_balance = cardBalance;
+        displayText(QString::number(cardBalance));
+    }
 }

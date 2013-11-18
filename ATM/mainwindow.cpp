@@ -21,6 +21,11 @@ void MainWindow::showText(QString text)
     ui->textBrowser->setText(text);
 }
 
+void MainWindow::printText(QString text)
+{
+   ui->textBrowser_2->setText(text);
+}
+
 void MainWindow::enableInput()
 {
     this->ui->inputField->setEnabled(true);
@@ -29,6 +34,16 @@ void MainWindow::enableInput()
 void MainWindow::disableInput()
 {
     this->ui->inputField->setEnabled(false);
+}
+
+void MainWindow::enablePrinter()
+{
+    this->ui->textBrowser_2->setEnabled(true);
+}
+
+void MainWindow::disablePrinter()
+{
+    this->ui->textBrowser_2->setEnabled(false);
 }
 
 void MainWindow::on_enterBtn_clicked()

@@ -38,10 +38,15 @@ public:
 
     void showText(QString text);
 
+    void printText(QString text);
+
     void enableInput();
 
-
     void disableInput();
+
+    void enablePrinter();
+
+    void disablePrinter();
 
 private slots:
     void on_enterBtn_clicked();

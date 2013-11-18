@@ -26,14 +26,17 @@ public:
     virtual void disconnect() = 0;
     // Output text to the display
     virtual void showText(QString text) = 0;
+    virtual void printText(QString text) = 0;
     virtual void enableInput() = 0;
     virtual void disableInput() = 0;
+    virtual void enablePrinter() = 0;
+    virtual void disablePrinter() = 0;
 };
 
 class ATM
 {
 public:
-    explicit ATM(IDisplay* display);
+    explicit ATM(IDisplay* display, IDisplay* printer);
     virtual ~ATM();
 
     // Accept input from user
@@ -41,6 +44,8 @@ public:
 
     void powerOn();
     void powerOff();
+
+    void showBalance(QString cardNumber);
 
     inline bool isOn()
     {
@@ -69,6 +74,14 @@ private:
         }
     }
 
+    void printText(QString text)
+    {
+        if(_printer)
+        {
+            _printer->printText(text);
+        }
+    }
+
 private:
     struct Card
     {
@@ -76,6 +89,7 @@ private:
         QString _pin;
         QString _owner_last_name;
         bool _owner_gender_male;    // For politeness :)
+        int _balance;
         //etc.
     };
 
@@ -84,6 +98,7 @@ private:
     enum ATMState {POWER_OFF = 0, NO_CARD = 1, PENDING_PIN = 2, TOP_MENU = 3 /* bla-bla-bla */};
     ATMState _state;
     IDisplay* _display;
+    IDisplay* _printer;
 
     // TODO: Move everything related to DB to a separate class
     //==========
