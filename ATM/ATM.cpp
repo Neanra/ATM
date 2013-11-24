@@ -58,11 +58,18 @@ void ATM::processInput(QString input)
             // Ignore
             break;
         case NO_CARD:
+            _display->showText("NO_CARD");
             // User has stuck a card into us, let's process it
             onCardInserted(input);
             break;
         case PENDING_PIN:
+            _display->showText("PENDING_PIN");
             // TODO: Check entered pin against our card info
+            //_display->showText("NOT IMPLEMENTED");
+            onPinEntered(input);
+            break;
+        case TOP_MENU:
+            // TODO: Show all services user can choose
             _display->showText("NOT IMPLEMENTED");
             break;
         default:
@@ -128,12 +135,70 @@ void ATM::onCardInserted(QString cardNumber)
         _current_card->_owner_last_name = clientsLastName;
         _current_card->_owner_gender_male = clientsGenderMale;
 
+        _state = PENDING_PIN;
+
         // Ask for PIN
         const QString PIN_REQUEST_TEMPLATE = "Hello, %1. %2! Please enter your PIN.";
         displayText(PIN_REQUEST_TEMPLATE.arg(_current_card->_owner_gender_male ? "Mr" : "Ms",
                                              _current_card->_owner_last_name));
 
-        _state = PENDING_PIN;
+    }
+    else
+    {
+        //Connection failed
+#ifndef NDEBUG
+        displayText("ERROR: Failed to open a connection to "BANK_DATABASE_NAME);
+        // TODO: Output what went wrong exactly using QSqlDatabase::lastError()
+#else
+        displayText(EJECT_ERR_CONN);
+#endif
+    }
+}
+
+void ATM::onPinEntered(QString cardsPin)
+{
+    if(_database.open())
+    {
+        QSqlQuery query(SELECT_CARD_BY_NUMBER.arg( _current_card->_card_number), _database);
+        if(!query.isActive())
+        {
+            // TODO: Panic. Failed to execute query.
+#ifndef NDEBUG
+            onCardEjected(query.lastError().text());
+#else
+            onCardEjected(EJECT_ERR_FAIL);
+#endif
+            return;
+        }
+
+        // Attempt to retreive the first (and only) entry
+        if(!query.first())
+        {
+            // There is no such card.
+            onCardEjected(EJECT_ERR_READ);
+            return;
+        }
+
+
+        QString actualCardsPin = query.value(1).toString();           // cards.pin
+
+
+        // ATM answer on PIN entering
+        if (actualCardsPin == cardsPin)
+        {
+            displayText ("Thank you!");
+            //TODO: show user top menu
+            _state = TOP_MENU;
+        }
+        else
+        {
+            // TODO: give card back
+             const QString PIN_REQUEST_TEMPLATE = "You entered wrong PIN for card %1. Take yor card back and try again.";
+             displayText(PIN_REQUEST_TEMPLATE.arg(_current_card->_card_number));
+
+             _state = NO_CARD;
+        }
+
     }
     else
     {

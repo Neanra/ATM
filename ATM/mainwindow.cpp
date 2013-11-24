@@ -49,6 +49,7 @@ void MainWindow::disablePrinter()
 void MainWindow::on_enterBtn_clicked()
 {
     _connected_atm->processInput(ui->inputField->text());
+    ui->inputField->clear();
 }
 
 void MainWindow::on_switchBtn_clicked()

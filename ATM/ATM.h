@@ -62,6 +62,7 @@ private:
     // TODO: Seizure messages?
 
     void onCardInserted(QString cardNumber);
+    void onPinEntered(QString cardsPin);
     void onCardEjected(QString message = EJECT_SUCCESS);
     //void onCardSeized(QString message = SEIZE_INVALID_PIN);  // When pin is entered incorrectly 3 times or card is blocked
 
