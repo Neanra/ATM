@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "ATM.h"
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -20,6 +21,8 @@ public:
 private:
     Ui::MainWindow *ui;
     ATM * _connected_atm;
+    ATM::Keyboard keyboard;
+
 public:
     inline void connect(const ATM& atm)
     {
@@ -38,6 +41,8 @@ public:
 
     void showText(QString text);
 
+    void appendText(QString text);
+
     void printText(QString text);
 
     void enableInput();
@@ -48,9 +53,29 @@ public:
 
     void disablePrinter();
 
+    void enableKeyboard();
+
+    void disableKeyboard();
+
+    void enableEnterBtn();
+
+    void disableEnterBtn();
+
 private slots:
     void on_enterBtn_clicked();
     void on_switchBtn_clicked();
+    void on_pushButton_1_clicked();
+    void on_pushButton_2_clicked();
+    void on_pushButton_3_clicked();
+    void on_pushButton_4_clicked();
+    void on_pushButton_5_clicked();
+    void on_pushButton_6_clicked();
+    void on_pushButton_7_clicked();
+    void on_pushButton_8_clicked();
+    void on_pushButton_9_clicked();
+    void on_pushButton_0_clicked();
+    void on_pushButton_backspace_clicked();
+    bool isEnabledKeyboard();
 };
 
 #endif // MAINWINDOW_H

@@ -1,4 +1,5 @@
 #include "ATM.h"
+//#include "mainwindow.h"
 
 #include <cassert>
 
@@ -56,16 +57,23 @@ void ATM::processInput(QString input)
         case POWER_OFF:
         //case LOADING:
             // Ignore
+            //MainWindow::disableEnterBtn();
+            //MainWindow::disableInput();
+            //MainWindow::disableKeyboard();
+            //MainWindow::disablePrinter();
             break;
         case NO_CARD:
             _display->showText("NO_CARD");
             // User has stuck a card into us, let's process it
+            //MainWindow::enableInput();
+            //MainWindow::enableEnterBtn();
             onCardInserted(input);
             break;
         case PENDING_PIN:
             _display->showText("PENDING_PIN");
             // TODO: Check entered pin against our card info
-            //_display->showText("NOT IMPLEMENTED");
+            //MainWindow::disableInput();
+            //MainWindow::enableKeyboard();
             onPinEntered(input);
             break;
         case TOP_MENU:
@@ -137,8 +145,9 @@ void ATM::onCardInserted(QString cardNumber)
 
         _state = PENDING_PIN;
 
+        //TODO: how to move this Pin request to void ATM::onPinEntered(QString cardsPin)???
         // Ask for PIN
-        const QString PIN_REQUEST_TEMPLATE = "Hello, %1. %2! Please enter your PIN.";
+        const QString PIN_REQUEST_TEMPLATE = "Hello, %1. %2! Please enter your PIN. \n";
         displayText(PIN_REQUEST_TEMPLATE.arg(_current_card->_owner_gender_male ? "Mr" : "Ms",
                                              _current_card->_owner_last_name));
 

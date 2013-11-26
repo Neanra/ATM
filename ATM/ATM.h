@@ -31,11 +31,14 @@ public:
     virtual void disableInput() = 0;
     virtual void enablePrinter() = 0;
     virtual void disablePrinter() = 0;
+    virtual void enableKeyboard() = 0;
+    virtual void disableKeyboard() = 0;
 };
 
 class ATM
 {
 public:
+    class Keyboard;
     explicit ATM(IDisplay* display, IDisplay* printer);
     virtual ~ATM();
 
@@ -110,6 +113,66 @@ private:
     //etc.
 
     QSqlDatabase _database; // Connection to DB
+};
+
+class ATM::Keyboard {
+private:
+    //array will contain Pin
+    static const int _size_of_pinArray = 4;
+    QString *_p_arr;
+public:
+    //Pin -1 -1 -1 -1 by default
+    Keyboard():_p_arr(new QString[_size_of_pinArray]){
+        for (int i = 0; i < _size_of_pinArray; i++) {
+                _p_arr[i] = "-1";
+            }
+    }
+
+    ~Keyboard(){
+        delete [] _p_arr;
+    }
+
+    bool isPin(){
+        for (int i = 0; i < _size_of_pinArray; i++) {
+                if (_p_arr[i] == "-1")
+                    return false;
+        }
+        return true;
+    }
+
+    bool isPinEmpty() {
+        for (int i = 0; i < _size_of_pinArray; i++) {
+                if (_p_arr[i] != "-1")
+                    return false;
+        }
+        return true;
+    }
+
+    void addNextToArray(QString input){
+        for (int i = 0; i < _size_of_pinArray; i++) {
+                if (_p_arr[i] == "-1")
+                    _p_arr[i]=input;
+        }
+     }
+
+    void delFromEnd() {
+        for (int i = _size_of_pinArray-1; i >= 0; i--) {
+        if (_p_arr[i] != "-1")
+        {
+            _p_arr[i]="-1";
+            break;
+        }
+    }
+}
+
+    QString getPin () const {
+        QString pin = "";
+        for (int i = 0; i < _size_of_pinArray; i++) {
+                pin+=_p_arr[i];
+        }
+        return pin;
+    }
+
 };
 
 #endif // ATM_H

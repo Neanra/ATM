@@ -20,3 +20,8 @@ HEADERS  += mainwindow.h \
     ATM.h
 
 FORMS    += mainwindow.ui
+
+OTHER_FILES += \
+    ATM-Machine (1).jpg
+
+RESOURCES +=
