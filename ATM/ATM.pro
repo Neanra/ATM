@@ -21,7 +21,12 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-OTHER_FILES += \
-    ATM-Machine (1).jpg
-
-RESOURCES +=
+# Copy database file to target directory after linking
+win32 {
+    DB_SRC_LOCATION = $$replace(PWD,/,\\)
+    DB_DST_LOCATION = $$replace(OUT_PWD,/,\\)
+    QMAKE_POST_LINK += copy $$DB_SRC_LOCATION\\bank.db $$DB_DST_LOCATION\\
+}
+unix {
+    QMAKE_POST_LINK += cp $$PWD/bank.db $$OUT_PWD/
+}
