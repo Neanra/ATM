@@ -21,6 +21,9 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
+# Allow C++11
+QMAKE_CXXFLAGS += -std=c++11
+
 # Copy database file to target directory after linking
 win32 {
     DB_SRC_LOCATION = $$replace(PWD,/,\\)

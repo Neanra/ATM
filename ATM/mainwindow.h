@@ -9,7 +9,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow, public IDisplay
+class MainWindow : public QMainWindow, public ITerminal
 {
     Q_OBJECT
 
@@ -27,16 +27,10 @@ public:
     inline void connect(const ATM& atm)
     {
         _connected_atm = const_cast<ATM*>(&atm);
-#ifndef NDEBUG
-        //showText("DEBUG: ATM connected");
-#endif
     }
     inline void disconnect()
     {
         _connected_atm = NULL;
-#ifndef NDEBUG
-        //showText("DEBUG: ATM disconnected");
-#endif
     }
 
     void showText(QString text);

@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    ATM atm(&w, &w);
+    ATM atm(&w);
 
     return a.exec();
 }
