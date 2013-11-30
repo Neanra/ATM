@@ -57,7 +57,6 @@ public:
 
 private slots:
     void on_enterBtn_clicked();
-    void on_switchBtn_clicked();
     void on_pushButton_1_clicked();
     void on_pushButton_2_clicked();
     void on_pushButton_3_clicked();
@@ -70,6 +69,7 @@ private slots:
     void on_pushButton_0_clicked();
     void on_pushButton_backspace_clicked();
     bool isEnabledKeyboard();
+    void on_powerBtn_clicked();
 };
 
 #endif // MAINWINDOW_H

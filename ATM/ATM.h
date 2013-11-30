@@ -247,65 +247,44 @@ public:
 
 class ATM::Keyboard {
 private:
-    //array will contain Pin
-    static const int _size_of_pinArray = 4;
-    // FIXME: Array of strings is an obvious overkill.
-    // Besides, constant-size arrays should not be dynamically allocated.
-    // Maybe a single string or, better yet, an int would suffice?
-    QString *_p_arr;
+    static const int _size_of_pin = 4;
+    QString _pin;
 public:
-    //Pin -1 -1 -1 -1 by default
-    Keyboard():_p_arr(new QString[_size_of_pinArray]){
-        for (int i = 0; i < _size_of_pinArray; i++) {
-                _p_arr[i] = "-1";
-            }
+    Keyboard():_pin(){}
+
+    ~Keyboard(){}
+
+    bool isPin() const {
+        // This check is enough, since characters are checked for validity on insertion
+        return _pin.size() == _size_of_pin;
     }
 
-    ~Keyboard(){
-        delete [] _p_arr;
+    bool isPinEmpty() const {
+        return _pin.size();
     }
 
-    bool isPin(){
-        for (int i = 0; i < _size_of_pinArray; i++) {
-                if (_p_arr[i] == "-1")
-                    return false;
+    bool addNextToArray(QChar input){
+        if(input.digitValue() == -1)
+        {
+            // Not a digit
+            return false;
         }
+        _pin.append(input);
         return true;
     }
-
-    bool isPinEmpty() {
-        for (int i = 0; i < _size_of_pinArray; i++) {
-                if (_p_arr[i] != "-1")
-                    return false;
-        }
-        return true;
-    }
-
-    void addNextToArray(QString input){
-        for (int i = 0; i < _size_of_pinArray; i++) {
-                if (_p_arr[i] == "-1")
-                    _p_arr[i]=input;
-        }
-     }
 
     void delFromEnd() {
-        for (int i = _size_of_pinArray-1; i >= 0; i--) {
-        if (_p_arr[i] != "-1")
-        {
-            _p_arr[i]="-1";
-            break;
-        }
-    }
-}
-
-    QString getPin () const {
-        QString pin = "";
-        for (int i = 0; i < _size_of_pinArray; i++) {
-                pin+=_p_arr[i];
-        }
-        return pin;
+        _pin.remove(_pin.length() - 1, 1);
     }
 
+    const QString& getPin () const {
+        return _pin;
+    }
+
+    void clearPin()
+    {
+        _pin.clear();
+    }
 };
 
 #endif // ATM_H
