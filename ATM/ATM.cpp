@@ -107,7 +107,7 @@ void ATM::processInput(QString input)
                 break;
             case TOP_MENU:
                 // TODO: Show all services user can choose
-                _display->showText("NOT IMPLEMENTED");
+                throw NotImplementedException();
                 break;
             default:
                 // WAT!?
@@ -145,7 +145,7 @@ void ATM::processInput(QString input)
     {
         onCardSeized(SEIZE_INACTIVE);
     }
-    catch(const std::exception& e)                  // Unknown error
+    catch(const InternalErrorException& e)          // Other error
     {
         onCardEjected(QString(e.what()));
     }
@@ -322,7 +322,7 @@ void ATM::displayTopMenu()
         return;
     }
     // TODO: Draw menu.
-    displayText("NOT IMPLEMENTED: Main menu is not yet implemented.");
+    throw NotImplementedException("Main menu is not yet implemented. [Card is ejected]");
 }
 
 void ATM::printText(QString text)

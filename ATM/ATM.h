@@ -104,6 +104,7 @@ private:
     class FailedToReadCardException;            // Invalid card number read
     class CardInactiveException;                // Inserted card is blocked or inactive,
                                                 // therefore no operations can be performed with it
+    class NotImplementedException;              // Feature is not yet implemented
 
     struct Card
     {
@@ -218,7 +219,7 @@ public:
 class ATM::FailedToReadCardException : public ATM::InternalErrorException
 {
 public:
-    explicit FailedToReadCardException(QString message = "Inserted card is inactive."):
+    explicit FailedToReadCardException(QString message = "Failed to read card."):
         ATM::InternalErrorException(message)
     {}
 };
@@ -232,7 +233,16 @@ public:
     {}
 };
 
-// ATM keyboard
+// Feature is not yet implemented
+class ATM::NotImplementedException : public ATM::InternalErrorException
+{
+public:
+    explicit NotImplementedException(QString message = "This feature is not yet implemented."):
+        InternalErrorException(message)
+    {}
+};
+
+// ATM keyboard (so far only a PIN container)
 //==========
 
 class ATM::Keyboard {

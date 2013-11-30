@@ -103,10 +103,10 @@ bool MainWindow::isEnabledKeyboard(){
 void MainWindow::on_enterBtn_clicked()
 {
     if (!isEnabledKeyboard()){
-    _connected_atm->processInput(ui->inputField->text());
-    ui->inputField->clear();
-    enableKeyboard();
-    disableInput();
+        _connected_atm->processInput(ui->inputField->text());
+        ui->inputField->clear();
+        enableKeyboard();
+        disableInput();
     }
     else if (isEnabledKeyboard())
     {
