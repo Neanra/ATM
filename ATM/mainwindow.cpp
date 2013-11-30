@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <cassert>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -111,6 +113,7 @@ void MainWindow::on_enterBtn_clicked()
         _connected_atm->processInput(keyboard.getPin());
         keyboard.clearPin();
     }
+    showATMState();
 }
 
 void MainWindow::on_pushButton_1_clicked()
@@ -200,9 +203,36 @@ void MainWindow::on_powerBtn_clicked()
     {
         _connected_atm->powerOn();
         ui->powerBtn->setText("Turn OFF");
+        //ui->cardState->setText("Card is absent");
         enableEnterBtn();
         enableInput();
         disableKeyboard();
         disablePrinter();
+    }
+    showATMState();
+
+}
+
+void MainWindow::showATMState()
+{
+    switch(_connected_atm->getATMState())
+    {
+        case 0: //POWER_OFF
+        ui->cardState->setText("ATM is off");
+        //case LOADING:
+            break;
+        case 1: //NO_CARD
+           ui->cardState->setText("Card is absent");
+            break;
+        case 2: //PENDING_PIN
+             ui->cardState->setText("Card is inserted");
+            break;
+        case 3: //TOP_MENU
+             ui->cardState->setText("Card is inserted");
+            break;
+        default:
+            // WAT!?
+            assert(false && "FATAL: Unhandled ATM state in processInput()!!!");
+            break;
     }
 }

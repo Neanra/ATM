@@ -55,6 +55,8 @@ public:
 
     void disableEnterBtn();
 
+    void showATMState();
+
 private slots:
     void on_enterBtn_clicked();
     void on_pushButton_1_clicked();

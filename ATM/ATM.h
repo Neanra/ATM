@@ -34,6 +34,7 @@ public:
     // Interface for everything that can be connected to an ATM: displays, printers, fingerprints scanners, etc.
     class IConnectableModule;
     class Keyboard;
+    //class CardState;
 
     // Construct ATM from an all-inclusive terminal
     explicit ATM(ITerminal* terminal);
@@ -136,6 +137,11 @@ private:
     QSqlDatabase _database; // Connection to DB
 
     size_t _pin_attempts_left;
+
+public:
+    const ATMState getATMState() const {
+        return _state;
+    }
 };
 
 // Interface for everything that can be connected to ATM: displays, printers, fingerprints scanners, etc.
@@ -286,5 +292,15 @@ public:
         _pin.clear();
     }
 };
+
+/*class ATM::CardState {
+private:
+    enum cardState {ABSENT = 0, INSERTED = 1, EJECTED = 2, SEIZED = 3};
+    static cardState _cardState;
+public:
+    const cardState& getCardState () const{
+        return _cardState;
+    }
+};*/
 
 #endif // ATM_H
