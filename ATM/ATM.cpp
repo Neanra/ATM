@@ -579,13 +579,13 @@ ATM::TransactionResult ATM::transferFunds(QString targetCardNumber, double amoun
     rollback_needed = true;
     try
     {
-        executeQuery(UPLOAD_FUNDS.arg(targetCardNumber));
+        executeQuery(UPLOAD_FUNDS.arg(targetCardNumber, QString::number(amount)));
         result = TRANS_SUCCESS;
     }
     catch(const DatabaseQueryFailedException&)
     {
         // Rollback changes
-        executeQuery(UPLOAD_FUNDS.arg(_current_card->_card_number));
+        executeQuery(UPLOAD_FUNDS.arg(_current_card->_card_number, QString::number(amount)));
     }
     updateCardData();
     return result;
