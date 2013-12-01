@@ -95,6 +95,8 @@ private:
     void deactivateCard();
 
     void requestPin(bool afterError = false);
+    void requestAmount();
+    void requestRecepient();
 
     // Show text on display unless there is no display
     void displayText(QString text);
@@ -133,15 +135,32 @@ private:
 
     Card* _current_card;
 
-    enum ATMState {POWER_OFF = 0, NO_CARD = 1, PENDING_PIN = 2, TOP_MENU = 3};
-    enum MenuState {TOP = 0, SHOW_BALANCE_METHOD = 1, DISPLAY_BALANCE = 2,
-                  PRINT_BALANCE = 3, WITHDRAW = 4, TRANSFER = 5, MOBILE = 6, MENU_ENDING = 7};
+    enum ATMState
+    {
+        POWER_OFF   = 0,
+        NO_CARD     = 1,
+        PENDING_PIN = 2,
+        TOP_MENU    = 3
+    };
+    enum MenuState
+    {
+        TOP                 = 0,
+        SHOW_BALANCE_METHOD = 1,
+        DISPLAY_BALANCE     = 2,
+        PRINT_BALANCE       = 3,
+        WITHDRAWAL_AMOUNT   = 4,
+        TRANSFER_AMOUNT     = 5,
+        TRANSFER_RECEPIENT  = 6,
+        MOBILE              = 7,
+        MENU_ENDING         = 8,
+        REPORT_RESULT       = 9
+    };
     enum TransactionResult
     {
         TRANS_SUCCESS           = 0,
         TRANS_FAIL              = 1,
         TRANS_NOT_ENOUGH_FUNDS  = 2,
-        TRANS_INVALID_RECEIVER  = 3
+        TRANS_INVALID_RECEPIENT = 3
     };
 
     ATMState _state;
@@ -162,6 +181,8 @@ private:
     QSqlDatabase _database; // Connection to DB
 
     size_t _pin_attempts_left;
+
+    double _pending_transfer_amount;    // Used to save input
 
 private:
     ATM::TransactionResult withdrawFunds(double amount);
@@ -302,10 +323,13 @@ public:
     }
 
     void acceptInput(QChar input) {
-        if (_atm._state == ATM::PENDING_PIN)
+        if (_atm._state == ATM::PENDING_PIN ||
+                _atm._menu_state == WITHDRAWAL_AMOUNT ||
+                _atm._menu_state == TRANSFER_AMOUNT ||
+                _atm._menu_state == TRANSFER_RECEPIENT)
         {
             addNextToArray(input);
-            _atm._display->appendText("*");
+            _atm._display->appendText((_atm._state == ATM::PENDING_PIN) ? "*" : QString(input));
         }
         else if(_atm._state == ATM::TOP_MENU)
         {

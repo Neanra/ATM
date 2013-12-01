@@ -109,7 +109,45 @@ void ATM::processInput(QString input)
                 onPinEntered(input);
                 break;
             case TOP_MENU:
-                topMenu(input);
+                switch(this->_menu_state)
+                {
+                default:
+                    topMenu(input);
+                    break;
+                case WITHDRAWAL_AMOUNT:
+                    _menu_state = REPORT_RESULT;
+                    if(withdrawFunds(input.toDouble()) == TRANS_SUCCESS)
+                    {
+                        displayText("Please take your money\n(press 0 to do so)");
+                    }
+                    else
+                    {
+                        displayText("Sorry! Not enough funds on your account.");
+                    }
+                    break;
+                case TRANSFER_AMOUNT:
+                    _menu_state = TRANSFER_RECEPIENT;
+                    _pending_transfer_amount = input.toDouble();
+                    requestRecepient();
+                    break;
+                case TRANSFER_RECEPIENT:
+                    _menu_state = REPORT_RESULT;
+                    switch(transferFunds(input, _pending_transfer_amount))
+                    {
+                    case TransactionResult::TRANS_SUCCESS:
+                        displayText("Transfer completed successfully. Press 0 to return to main menu.");
+                        break;
+                    case TransactionResult::TRANS_INVALID_RECEPIENT:
+                        displayText(QString("Account #%1 does not exist. Press 0 to go back to main menu.").arg(input));
+                        break;
+                    case TransactionResult::TRANS_NOT_ENOUGH_FUNDS:
+                        displayText("Sorry! Not enough funds on your account.");
+                        break;
+                    default:
+                        throw InternalErrorException("Unknown error occured on transfer attempt");
+                    }
+                    break;
+                }
                 break;
             default:
                 // WAT!?
@@ -226,12 +264,14 @@ void ATM::finalizeCard()
     }
     _pin_attempts_left = MAX_PIN_ERRORS;
     _state = NO_CARD;
+    _menu_state = TOP;
 }
 
 void ATM::powerOn()
 {
     // TODO: Add any initialization logic here.
     _state = NO_CARD;
+    _menu_state = TOP;
     displayText("Please insert your card");
     _keyboard->enableInput();
     _display->showCardState("Card is absent");
@@ -351,6 +391,7 @@ void ATM::printText(QString text)
 
 void ATM::printBalance()
 {
+    updateCardData();
     if(_printer)
     {
         _printer->enablePrinter();
@@ -400,12 +441,12 @@ void ATM::topMenu(QString selectedService)
                 break;
 
             case 2:
-                _menu_state = WITHDRAW;
-                 //some function to display withdraw options
+                _menu_state = WITHDRAWAL_AMOUNT;
+                requestAmount();
                 break;
             case 3:
-                _menu_state = TRANSFER;
-                //some function to display TRANSFER options
+                _menu_state = TRANSFER_AMOUNT;
+                requestAmount();
                break;
             case 4:
                 _menu_state = MOBILE;
@@ -427,7 +468,6 @@ void ATM::topMenu(QString selectedService)
         case 1:
             _menu_state = DISPLAY_BALANCE;
             showBalance();
-            // some function to display DISPLAY_BALANCE options
             break;
         case 2:
             _menu_state = PRINT_BALANCE;
@@ -446,11 +486,20 @@ void ATM::topMenu(QString selectedService)
             displayTopMenu();
         }
         break;
+    case REPORT_RESULT:
+        if(selected == 0)
+        {
+            _menu_state = TOP;
+            displayTopMenu();
+        }
+        break;
     case PRINT_BALANCE:
         break;
-    case WITHDRAW:
+    case WITHDRAWAL_AMOUNT:
         break;
-    case TRANSFER:
+    case TRANSFER_AMOUNT:
+        break;
+    case TRANSFER_RECEPIENT:
         break;
     case MOBILE:
         break;
@@ -465,6 +514,16 @@ void ATM::showBalanceOptions()
     displayText("1. Show ledger on screen. \n2. Print ledger. \n0. Back to Main menu. \n");
 }
 
+void ATM::requestAmount()
+{
+    displayText("Please enter amount: ");
+}
+
+void ATM::requestRecepient()
+{
+    displayText("Please enter beneficiary account #: ");
+}
+
 ATM::TransactionResult ATM::withdrawFunds(double amount)
 {
     assert(_current_card && _database.isOpen() && "FATAL: Unexpected call to ATM::withdrawFunds()!!!");
@@ -474,6 +533,7 @@ ATM::TransactionResult ATM::withdrawFunds(double amount)
         return TransactionResult::TRANS_NOT_ENOUGH_FUNDS;
     }
     executeQuery(WITHDRAW_FUNDS.arg(_current_card->_card_number, QString::number(amount)));
+    updateCardData();
     return TransactionResult::TRANS_SUCCESS;
 }
 
@@ -505,7 +565,7 @@ ATM::TransactionResult ATM::transferFunds(QString targetCardNumber, double amoun
     }
     if(!cardExists(targetCardNumber))
     {
-        return TransactionResult::TRANS_INVALID_RECEIVER;
+        return TransactionResult::TRANS_INVALID_RECEPIENT;
     }
     TransactionResult result = TRANS_FAIL;
     bool rollback_needed = false;
@@ -522,6 +582,7 @@ ATM::TransactionResult ATM::transferFunds(QString targetCardNumber, double amoun
         // Rollback changes
         executeQuery(UPLOAD_FUNDS.arg(_current_card->_card_number));
     }
+    updateCardData();
     return result;
 }
 
