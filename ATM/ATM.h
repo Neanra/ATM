@@ -151,8 +151,9 @@ private:
         WITHDRAWAL_AMOUNT   = 4,
         TRANSFER_AMOUNT     = 5,
         TRANSFER_RECEPIENT  = 6,
-        MOBILE              = 7,
-        REPORT_RESULT       = 8
+        MOBILE_AMOUNT       = 7,
+        MOBILE_RECEPIENT    = 8,
+        REPORT_RESULT       = 9
     };
     enum TransactionResult
     {
@@ -325,7 +326,9 @@ public:
         if (_atm._state == ATM::PENDING_PIN ||
                 _atm._menu_state == WITHDRAWAL_AMOUNT ||
                 _atm._menu_state == TRANSFER_AMOUNT ||
-                _atm._menu_state == TRANSFER_RECEPIENT)
+                _atm._menu_state == TRANSFER_RECEPIENT ||
+                _atm._menu_state == MOBILE_AMOUNT ||
+                _atm._menu_state == MOBILE_RECEPIENT)
         {
             addNextToArray(input);
             _atm._display->appendText((_atm._state == ATM::PENDING_PIN) ? "*" : QString(input));

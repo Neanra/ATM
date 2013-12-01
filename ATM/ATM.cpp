@@ -124,7 +124,7 @@ void ATM::processInput(QString input)
                     }
                     else
                     {
-                        displayText("Sorry! Not enough funds on your account.");
+                        displayText("Sorry! Not enough funds on your account. Press 0 to go back to main menu.");
                     }
                     break;
                 case TRANSFER_AMOUNT:
@@ -143,11 +143,28 @@ void ATM::processInput(QString input)
                         displayText(QString("Account #%1 does not exist. Press 0 to go back to main menu.").arg(input));
                         break;
                     case TransactionResult::TRANS_NOT_ENOUGH_FUNDS:
-                        displayText("Sorry! Not enough funds on your account.");
+                        displayText("Sorry! Not enough funds on your account. Press 0 to go back to main menu.");
                         break;
                     default:
                         throw InternalErrorException("Unknown error occured on transfer attempt");
                     }
+                    break;
+                case MOBILE_AMOUNT:
+                    _menu_state = MOBILE_RECEPIENT;
+                    _pending_transfer_amount = input.toDouble();
+                    displayText("Please enter your phone number: ");
+                    break;
+                case MOBILE_RECEPIENT:
+                    _menu_state = REPORT_RESULT;
+                    if(withdrawFunds(_pending_transfer_amount) == TRANS_SUCCESS)
+                    {
+                        displayText(QString("Successfully sent %1 to mobile %2\n(press 0 to continue)").arg(QString::number(_pending_transfer_amount), input));
+                    }
+                    else
+                    {
+                        displayText("Sorry! Not enough funds on your account. Press 0 to go back to main menu.");
+                    }
+                    break;
                     break;
                 }
                 break;
@@ -456,8 +473,8 @@ void ATM::topMenu(QString selectedService)
                 requestAmount();
                break;
             case 4:
-                _menu_state = MOBILE;
-                //some function to display MOBILE options
+                _menu_state = MOBILE_AMOUNT;
+                requestAmount();
                break;
             default: break;
             }
@@ -500,17 +517,7 @@ void ATM::topMenu(QString selectedService)
             displayTopMenu();
         }
         break;
-    case PRINT_BALANCE:
-        break;
-    case WITHDRAWAL_AMOUNT:
-        break;
-    case TRANSFER_AMOUNT:
-        break;
-    case TRANSFER_RECEPIENT:
-        break;
-    case MOBILE:
-        break;
-
+    default: break;
     }
 }
 
