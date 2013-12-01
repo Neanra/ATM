@@ -6,6 +6,7 @@
 #include <QString>
 #include <QtSql>
 #include <exception>
+#include <cassert>
 
 
 // TODO: Move DB configuration data to a better place
@@ -49,6 +50,7 @@ public:
     void powerOff();
 
     void showBalance();
+    void printBalance();
 
     inline bool isOn()
     {
@@ -71,6 +73,8 @@ private:
     void onCardInserted(QString cardNumber);
     void onPinEntered(QString cardsPin);
     void topMenu(QString selectedService);
+
+    void showBalanceOptions();
     // TODO: String parameters here are just begging to be replaced with numerical codes.
     void onCardEjected(QString message = EJECT_SUCCESS);
     void onCardSeized(QString message);
@@ -130,7 +134,7 @@ private:
     Card* _current_card;
 
     enum ATMState {POWER_OFF = 0, NO_CARD = 1, PENDING_PIN = 2, TOP_MENU = 3};
-    enum MenuState {TOP = 0, SHOW_BALANCE = 1, DISPLAY_BALANCE = 2,
+    enum MenuState {TOP = 0, SHOW_BALANCE_METHOD = 1, DISPLAY_BALANCE = 2,
                   PRINT_BALANCE = 3, WITHDRAW = 4, TRANSFER = 5, MOBILE = 6, MENU_ENDING = 7};
     enum TransactionResult
     {
@@ -141,6 +145,7 @@ private:
     };
 
     ATMState _state;
+    MenuState _menu_state;
     IDisplay* _display;
     IPrinter* _printer;
     IKeyboard* _keyboard;
@@ -278,10 +283,11 @@ public:
 class ATM::InputContainer {
 private:
     static const int _size_of_pin = 4;
+    static const int _size_of_menu_option = 1;
     QString _pin;
-    const ATM& _atm;
+    ATM& _atm;
 public:
-    explicit InputContainer(const ATM& atm):_atm(atm),_pin(){}
+    explicit InputContainer(ATM& atm):_atm(atm),_pin(){}
 
     ~InputContainer(){}
 
@@ -291,17 +297,22 @@ public:
     }
 
     bool isPinEmpty() const {
-        return _pin.size();
+        return _pin.size()==0;
     }
 
-    bool addNextToArray(QChar input){
-        if(input.digitValue() == -1)
+    void acceptInput(QChar input) {
+        if (_atm._state == ATM::PENDING_PIN)
         {
-            // Not a digit
-            return false;
+            addNextToArray(input);
         }
-        _pin.append(input);
-        return true;
+        else if(_atm._state == ATM::TOP_MENU)
+        {
+           _atm.processInput(input);
+        }
+        else
+        {
+            assert(false && "FATAL: Unexpected call to ATM::InputContainer::acceptInput()!!!");
+        }
     }
 
     void delFromEnd() {
@@ -315,6 +326,17 @@ public:
     void clearPin()
     {
         _pin.clear();
+    }
+
+private:
+    bool addNextToArray(QChar input){
+        if(input.digitValue() == -1)
+        {
+            // Not a digit
+            return false;
+        }
+        _pin.append(input);
+        return true;
     }
 };
 

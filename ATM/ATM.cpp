@@ -42,7 +42,8 @@ ATM::ATM(ITerminal* terminal):
     _printer(terminal),
     _database(QSqlDatabase::addDatabase(BANK_DATABASE_DRIVER)),
     _current_card(NULL),
-    _pin_attempts_left(MAX_PIN_ERRORS)
+    _pin_attempts_left(MAX_PIN_ERRORS),
+    _menu_state(TOP)
 {
     if(terminal)
     {
@@ -59,7 +60,8 @@ ATM::ATM(IDisplay* display, IKeyboard* keyboard, IPrinter* printer):
     _printer(printer),
     _database(QSqlDatabase::addDatabase(BANK_DATABASE_DRIVER)),
     _current_card(NULL),
-    _pin_attempts_left(MAX_PIN_ERRORS)
+    _pin_attempts_left(MAX_PIN_ERRORS),
+    _menu_state(TOP)
 {
     if(_display)
     {
@@ -108,8 +110,6 @@ void ATM::processInput(QString input)
                 break;
             case TOP_MENU:
                 topMenu(input);
-                // TODO: Show all services user can choose
-                throw NotImplementedException();
                 break;
             default:
                 // WAT!?
@@ -315,7 +315,7 @@ void ATM::deactivateCard()
 void ATM::showBalance()
 {
     updateCardData();
-    displayText(QString("Your balance: %1").arg(QString::number(_current_card->_balance)));
+    displayText(QString("Your balance: %1 \n\nPress 0 to return to Main menu").arg(QString::number(_current_card->_balance)));
 }
 
 // Print text to display unless there is no display
@@ -338,8 +338,7 @@ void ATM::displayTopMenu()
         // Display where?
         return;
     }
-    // TODO: Draw menu.
-    throw NotImplementedException("Main menu is not yet implemented. [Card is ejected]");
+    displayText ("TOP MENU: \n1. Show ledger.\n2. Withdraw money. \n3. Money transfer. \n4. Recharge your mobile. \n0. Complete work. \n ");
 }
 
 void ATM::printText(QString text)
@@ -347,6 +346,15 @@ void ATM::printText(QString text)
     if(_printer)
     {
         _printer->printText(text);
+    }
+}
+
+void ATM::printBalance()
+{
+    if(_printer)
+    {
+        _printer->enablePrinter();
+        _printer->printText(QString("Your balance: %1 \n").arg(QString::number(_current_card->_balance)));
     }
 }
 
@@ -369,29 +377,82 @@ void ATM::requestPin(bool afterError)
 
 void ATM::topMenu(QString selectedService)
 {
- /*   switch(selectedService)
+    int selected = selectedService.toInt();
+    switch(_menu_state)
     {
-        case "SHOW_BALANCE_ON_SCREEN":
+        case TOP:
+        {
+            switch (selected)
+            {
+            case 0:
+                _menu_state = MENU_ENDING;
+                //some function to display MENU_ENDING options
+                // eject card
+                break;
+
+            case 1:
+                _menu_state = SHOW_BALANCE_METHOD;
+                showBalanceOptions();
+                break;
+
+            case 2:
+                _menu_state = WITHDRAW;
+                 //some function to display withdraw options
+                break;
+            case 3:
+                _menu_state = TRANSFER;
+                //some function to display TRANSFER options
+               break;
+            case 4:
+                _menu_state = MOBILE;
+                //some function to display MOBILE options
+               break;
+            default: break;
+            }
+        }
+        break;
+
+    case SHOW_BALANCE_METHOD:
+    {
+        switch(selected)
+        {
+        case 0:
+            _menu_state = TOP;
+        case 1:
+            _menu_state = DISPLAY_BALANCE;
             showBalance();
+            // some function to display DISPLAY_BALANCE options
             break;
-        case "PRINT_BALANCE":
-            // void printTODO:Balace();
-            printText("Your balance: ??");
+        case 2:
+            _menu_state = PRINT_BALANCE;
+            printBalance();
+            // some function to display DISPLAY_BALANCE options
             break;
-        case "WITHDRAW_MONEY":
-          //  onPinEntered(input);
-            throw NotImplementedException();
-            break;
-     //   case TOP_MENU:
-       //     topMenu(input);
-       //     // TODO: Show all services user can choose
-       //     throw NotImplementedException();
-       //     break;
-        default:
-            // WAT!?
-        //    assert(false && "FATAL: Unhandled ATM state in processInput()!!!");
-            break;
-    }*/
+        default: break;
+        }
+    }
+        break;
+    case DISPLAY_BALANCE:
+        if(selected == 0)
+             _menu_state = TOP;
+        break;
+    case PRINT_BALANCE:
+        break;
+    case WITHDRAW:
+        break;
+    case TRANSFER:
+        break;
+    case MOBILE:
+        break;
+    case MENU_ENDING:
+        break;
+
+    }
+}
+
+void ATM::showBalanceOptions()
+{
+    displayText("1. Show ledger on screen. \n2. Print ledger. \n0. Back to Main menu. \n");
 }
 
 ATM::TransactionResult ATM::withdrawFunds(double amount)

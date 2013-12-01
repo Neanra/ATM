@@ -123,61 +123,61 @@ void MainWindow::on_enterBtn_clicked()
 
 void MainWindow::on_pushButton_1_clicked()
 {
-    keyboard->addNextToArray('1');
+    keyboard->acceptInput('1');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    keyboard->addNextToArray('2');
+    keyboard->acceptInput('2');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_3_clicked()
 {
-    keyboard->addNextToArray('3');
+    keyboard->acceptInput('3');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_4_clicked()
 {
-    keyboard->addNextToArray('4');
+    keyboard->acceptInput('4');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_5_clicked()
 {
-    keyboard->addNextToArray('5');
+    keyboard->acceptInput('5');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_6_clicked()
 {
-    keyboard->addNextToArray('6');
+    keyboard->acceptInput('6');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_7_clicked()
 {
-    keyboard->addNextToArray('7');
+    keyboard->acceptInput('7');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_8_clicked()
 {
-    keyboard->addNextToArray('8');
+    keyboard->acceptInput('8');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_9_clicked()
 {
-    keyboard->addNextToArray('9');
+    keyboard->acceptInput('9');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_0_clicked()
 {
-    keyboard->addNextToArray('0');
+    keyboard->acceptInput('0');
     appendText("*");
 }
 

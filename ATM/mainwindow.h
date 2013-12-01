@@ -27,7 +27,7 @@ public:
     inline void connect(const ATM& atm)
     {
         _connected_atm = const_cast<ATM*>(&atm);
-        keyboard = new ATM::InputContainer(atm);
+        keyboard = new ATM::InputContainer(const_cast<ATM&>(atm));
     }
     inline void disconnect()
     {
