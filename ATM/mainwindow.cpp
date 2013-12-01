@@ -30,7 +30,8 @@ void MainWindow::appendText(QString text){
 
 void MainWindow::printText(QString text)
 {
-   ui->textBrowser_2->setText(text);
+    ui->textBrowser_2->insertPlainText(text.append("\n-----\n"));
+    ui->textBrowser_2->moveCursor (QTextCursor::End);
 }
 
 void MainWindow::enableInput()

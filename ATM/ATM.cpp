@@ -354,7 +354,11 @@ void ATM::printBalance()
     if(_printer)
     {
         _printer->enablePrinter();
-        _printer->printText(QString("Your balance: %1 \n").arg(QString::number(_current_card->_balance)));
+        _printer->printText(
+            QString("Bank: PrivatBank \nAddress: 2 Skovorody vul., Kyiv \nPhone: +38 044 463-6985 \nClient: %2 \nBalance: %1 \nCard number: %3 \n").arg(QString::number(_current_card->_balance),
+                                                                                                                                                        _current_card->_owner_last_name,
+                                                                                                                                                        _current_card->_card_number)
+        );
     }
 }
 
@@ -418,6 +422,8 @@ void ATM::topMenu(QString selectedService)
         {
         case 0:
             _menu_state = TOP;
+            displayTopMenu();
+            break;
         case 1:
             _menu_state = DISPLAY_BALANCE;
             showBalance();
@@ -426,7 +432,8 @@ void ATM::topMenu(QString selectedService)
         case 2:
             _menu_state = PRINT_BALANCE;
             printBalance();
-            // some function to display DISPLAY_BALANCE options
+            _menu_state = TOP;
+            displayTopMenu();
             break;
         default: break;
         }
@@ -434,7 +441,10 @@ void ATM::topMenu(QString selectedService)
         break;
     case DISPLAY_BALANCE:
         if(selected == 0)
+        {
              _menu_state = TOP;
+            displayTopMenu();
+        }
         break;
     case PRINT_BALANCE:
         break;
