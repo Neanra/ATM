@@ -243,6 +243,8 @@ void ATM::onCardEjected(QString message)
     displayText(message);
     _display->showCardState("Card is ejected");
     finalizeCard();
+    _keyboard->enableInput();
+    _keyboard->disableKeyboard();
 }
 
 void ATM::onCardSeized(QString message)
@@ -430,8 +432,8 @@ void ATM::topMenu(QString selectedService)
             switch (selected)
             {
             case 0:
-                _menu_state = MENU_ENDING;
-                //some function to display MENU_ENDING options
+                _menu_state = TOP;
+                onCardEjected();
                 // eject card
                 break;
 
@@ -502,8 +504,6 @@ void ATM::topMenu(QString selectedService)
     case TRANSFER_RECEPIENT:
         break;
     case MOBILE:
-        break;
-    case MENU_ENDING:
         break;
 
     }

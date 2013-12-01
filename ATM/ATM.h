@@ -152,8 +152,7 @@ private:
         TRANSFER_AMOUNT     = 5,
         TRANSFER_RECEPIENT  = 6,
         MOBILE              = 7,
-        MENU_ENDING         = 8,
-        REPORT_RESULT       = 9
+        REPORT_RESULT       = 8
     };
     enum TransactionResult
     {
