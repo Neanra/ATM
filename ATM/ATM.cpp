@@ -1,6 +1,8 @@
 #include "ATM.h"
 
 #include <cassert>
+#include <QTime>
+#include <QDate>
 
 const size_t ATM::MAX_PIN_ERRORS = 3;
 
@@ -355,9 +357,12 @@ void ATM::printBalance()
 {
     if(_printer)
     {
+        QDate cd = QDate::currentDate();
+        QTime ct = QTime::currentTime();
+
         _printer->enablePrinter();
         _printer->printText(
-            QString("Bank: PrivatBank \nAddress: 2 Skovorody vul., Kyiv \nPhone: +38 044 463-6985 \nClient: %2 \nBalance: %1 \nCard number: %3 \n").arg(QString::number(_current_card->_balance),
+                    QString("Bank: PrivatBank \nAddress: 2 Skovorody vul., Kyiv \nPhone: +38 044 463-6985 \nClient: %2 \nBalance: %1 \nCard number: %3 \n" + ct.toString() + "\n" + cd.toString("dd.MM.yyyy")).arg(QString::number(_current_card->_balance),
                                                                                                                                                         _current_card->_owner_last_name,
                                                                                                                                                         _current_card->_card_number)
         );
