@@ -33,7 +33,7 @@ class ATM
 public:
     // Interface for everything that can be connected to an ATM: displays, printers, fingerprints scanners, etc.
     class IConnectableModule;
-    class Keyboard;
+    class InputContainer;
     //class CardState;
 
     // Construct ATM from an all-inclusive terminal
@@ -70,6 +70,7 @@ private:
 
     void onCardInserted(QString cardNumber);
     void onPinEntered(QString cardsPin);
+    void topMenu(QString selectedService);
     // TODO: String parameters here are just begging to be replaced with numerical codes.
     void onCardEjected(QString message = EJECT_SUCCESS);
     void onCardSeized(QString message);
@@ -124,7 +125,9 @@ private:
 
     Card* _current_card;
 
-    enum ATMState {POWER_OFF = 0, NO_CARD = 1, PENDING_PIN = 2, TOP_MENU = 3 /* bla-bla-bla */};
+    enum ATMState {POWER_OFF = 0, NO_CARD = 1, PENDING_PIN = 2, TOP_MENU = 3};
+    enum MenuState {TOP = 0, SHOW_BALANCE = 1, DISPLAY_BALANCE = 2,
+                  PRINT_BALANCE = 3, WITHDRAW = 4, TRANSFER = 5, MOBILE = 6, MENU_ENDING = 7};
     ATMState _state;
     IDisplay* _display;
     IPrinter* _printer;
@@ -251,14 +254,15 @@ public:
 // ATM keyboard (so far only a PIN container)
 //==========
 
-class ATM::Keyboard {
+class ATM::InputContainer {
 private:
     static const int _size_of_pin = 4;
     QString _pin;
+    const ATM& _atm;
 public:
-    Keyboard():_pin(){}
+    InputContainer(const ATM& atm):_atm(atm),_pin(){}
 
-    ~Keyboard(){}
+    ~InputContainer(){}
 
     bool isPin() const {
         // This check is enough, since characters are checked for validity on insertion

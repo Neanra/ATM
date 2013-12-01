@@ -106,6 +106,7 @@ void ATM::processInput(QString input)
                 onPinEntered(input);
                 break;
             case TOP_MENU:
+                topMenu(input);
                 // TODO: Show all services user can choose
                 throw NotImplementedException();
                 break;
@@ -356,7 +357,34 @@ void ATM::requestPin(bool afterError)
     else
     {
         displayText(
-            QString("Invalid PIN! You have %1 attempts left. Please try again.").arg(QString::number(_pin_attempts_left))
+            QString("Invalid PIN! You have %1 attempts left. Please try again. \n").arg(QString::number(_pin_attempts_left))
         );
     }
+}
+
+void ATM::topMenu(QString selectedService)
+{
+ /*   switch(selectedService)
+    {
+        case "SHOW_BALANCE_ON_SCREEN":
+            showBalance();
+            break;
+        case "PRINT_BALANCE":
+            // void printTODO:Balace();
+            printText("Your balance: ??");
+            break;
+        case "WITHDRAW_MONEY":
+          //  onPinEntered(input);
+            throw NotImplementedException();
+            break;
+     //   case TOP_MENU:
+       //     topMenu(input);
+       //     // TODO: Show all services user can choose
+       //     throw NotImplementedException();
+       //     break;
+        default:
+            // WAT!?
+        //    assert(false && "FATAL: Unhandled ATM state in processInput()!!!");
+            break;
+    }*/
 }

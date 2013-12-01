@@ -21,16 +21,19 @@ public:
 private:
     Ui::MainWindow *ui;
     ATM * _connected_atm;
-    ATM::Keyboard keyboard;
+    ATM::InputContainer * keyboard;
 
 public:
     inline void connect(const ATM& atm)
     {
         _connected_atm = const_cast<ATM*>(&atm);
+        keyboard = new ATM::InputContainer(atm);
     }
     inline void disconnect()
     {
         _connected_atm = NULL;
+        delete keyboard;
+        keyboard = NULL;
     }
 
     void showText(QString text);

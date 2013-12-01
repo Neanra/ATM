@@ -6,7 +6,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    _connected_atm(NULL)
+    _connected_atm(NULL),
+    keyboard(NULL)
 {
     ui->setupUi(this);
 }
@@ -115,76 +116,76 @@ void MainWindow::on_enterBtn_clicked()
     }
     else if (isEnabledKeyboard())
     {
-        _connected_atm->processInput(keyboard.getPin());
-        keyboard.clearPin();
+        _connected_atm->processInput(keyboard->getPin());
+        keyboard->clearPin();
     }
 }
 
 void MainWindow::on_pushButton_1_clicked()
 {
-    keyboard.addNextToArray('1');
+    keyboard->addNextToArray('1');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    keyboard.addNextToArray('2');
+    keyboard->addNextToArray('2');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_3_clicked()
 {
-    keyboard.addNextToArray('3');
+    keyboard->addNextToArray('3');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_4_clicked()
 {
-    keyboard.addNextToArray('4');
+    keyboard->addNextToArray('4');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_5_clicked()
 {
-    keyboard.addNextToArray('5');
+    keyboard->addNextToArray('5');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_6_clicked()
 {
-    keyboard.addNextToArray('6');
+    keyboard->addNextToArray('6');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_7_clicked()
 {
-    keyboard.addNextToArray('7');
+    keyboard->addNextToArray('7');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_8_clicked()
 {
-    keyboard.addNextToArray('8');
+    keyboard->addNextToArray('8');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_9_clicked()
 {
-    keyboard.addNextToArray('9');
+    keyboard->addNextToArray('9');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_0_clicked()
 {
-    keyboard.addNextToArray('0');
+    keyboard->addNextToArray('0');
     appendText("*");
 }
 
 void MainWindow::on_pushButton_backspace_clicked()
 {
-    if (!keyboard.isPinEmpty())
+    if (!keyboard->isPinEmpty())
     {
-        keyboard.delFromEnd();
+        keyboard->delFromEnd();
         ui->textBrowser->moveCursor (QTextCursor::End);
         ui->textBrowser->textCursor().deletePreviousChar();
         ui->textBrowser->textCursor().clearSelection();
@@ -207,7 +208,6 @@ void MainWindow::on_powerBtn_clicked()
     {
         _connected_atm->powerOn();
         ui->powerBtn->setText("Turn OFF");
-        //ui->cardState->setText("Card is absent");
         enableEnterBtn();
         enableInput();
         disableKeyboard();
