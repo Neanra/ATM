@@ -55,7 +55,7 @@ public:
 
     void disableEnterBtn();
 
-    void showATMState();
+    void showCardState(QString cardState);
 
 private slots:
     void on_enterBtn_clicked();

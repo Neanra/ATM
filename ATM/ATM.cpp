@@ -169,6 +169,7 @@ void ATM::onCardInserted(QString cardNumber)
 
     updateCardData(cardNumber);
 
+    _display->showCardState("Card is inserted");
     _state = PENDING_PIN;
 
     // Ask for PIN
@@ -200,6 +201,20 @@ void ATM::onPinEntered(QString cardsPin)
 void ATM::onCardEjected(QString message)
 {
     displayText(message);
+    _display->showCardState("Card is ejected");
+    finalizeCard();
+}
+
+void ATM::onCardSeized(QString message)
+{
+    // TODO: Place any additional seizure logic here
+    displayText(message);
+    _display->showCardState("Card is seized");
+    finalizeCard();
+}
+
+void ATM::finalizeCard()
+{
     // Releasing DB connection.
     _database.close();
     if(_current_card)
@@ -211,18 +226,13 @@ void ATM::onCardEjected(QString message)
     _state = NO_CARD;
 }
 
-void ATM::onCardSeized(QString message)
-{
-    // TODO: Place any additional seizure logic here
-    onCardEjected(message);
-}
-
 void ATM::powerOn()
 {
     // TODO: Add any initialization logic here.
     _state = NO_CARD;
     displayText("Please insert your card");
     _keyboard->enableInput();
+    _display->showCardState("Card is absent");
 }
 
 
@@ -241,6 +251,7 @@ void ATM::powerOff()
     }
     _state = POWER_OFF;
     _keyboard->disableInput();
+    _display->showCardState("");
 }
 
 // Query DB for current card data by its number

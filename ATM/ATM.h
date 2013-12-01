@@ -74,6 +74,10 @@ private:
     void onCardEjected(QString message = EJECT_SUCCESS);
     void onCardSeized(QString message);
 
+    // Perform common operations on card seizure/ejection
+    // (such as DB disconnection)
+    void finalizeCard();
+
     // Query DB for currently inserted card's data
     inline void updateCardData()
     {
@@ -137,11 +141,6 @@ private:
     QSqlDatabase _database; // Connection to DB
 
     size_t _pin_attempts_left;
-
-public:
-    const ATMState getATMState() const {
-        return _state;
-    }
 };
 
 // Interface for everything that can be connected to ATM: displays, printers, fingerprints scanners, etc.
@@ -160,6 +159,7 @@ class IDisplay : public virtual ATM::IConnectableModule
 public:
     // Output text to the display
     virtual void showText(QString text) = 0;
+    virtual void showCardState(QString text) = 0;
 };
 
 // Entities responsible for user input must implement this interface
