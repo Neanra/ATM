@@ -84,6 +84,7 @@ private:
     {
         updateCardData(_current_card->_card_number);
     }
+    bool cardExists(QString number);
     // Query DB for card data by its number
     void updateCardData(QString cardNumber);
     // Mark currently inserted card as inactive in DB
@@ -101,6 +102,9 @@ private:
 
     // Print text to printer, if it is connected
     void printText(QString text);
+
+    // TODO: Separate from this class entirely?
+    void executeQuery(QString query);     // throws DatabaseQueryFailedException
 
 private:
     // ATM errors
@@ -128,6 +132,14 @@ private:
     enum ATMState {POWER_OFF = 0, NO_CARD = 1, PENDING_PIN = 2, TOP_MENU = 3};
     enum MenuState {TOP = 0, SHOW_BALANCE = 1, DISPLAY_BALANCE = 2,
                   PRINT_BALANCE = 3, WITHDRAW = 4, TRANSFER = 5, MOBILE = 6, MENU_ENDING = 7};
+    enum TransactionResult
+    {
+        TRANS_SUCCESS           = 0,
+        TRANS_FAIL              = 1,
+        TRANS_NOT_ENOUGH_FUNDS  = 2,
+        TRANS_INVALID_RECEIVER  = 3
+    };
+
     ATMState _state;
     IDisplay* _display;
     IPrinter* _printer;
@@ -138,12 +150,17 @@ private:
     // Templates for common SQL queries
     static const QString SELECT_CARD_BY_NUMBER;
     static const QString DEACTIVATE_CARD;
-    //static const QString UPDATE_CARD_BALANCE;
+    static const QString WITHDRAW_FUNDS;
+    static const QString UPLOAD_FUNDS;
     //etc.
 
     QSqlDatabase _database; // Connection to DB
 
     size_t _pin_attempts_left;
+
+private:
+    ATM::TransactionResult withdrawFunds(double amount);
+    ATM::TransactionResult transferFunds(QString targetCardNumber, double amount);
 };
 
 // Interface for everything that can be connected to ATM: displays, printers, fingerprints scanners, etc.
@@ -222,6 +239,10 @@ public:
     {
         return _seize_card;
     }
+    inline void setSeizeCard(bool seize)
+    {
+        _seize_card = seize;
+    }
 };
 
 // Inserted card number is invalid
@@ -260,7 +281,7 @@ private:
     QString _pin;
     const ATM& _atm;
 public:
-    InputContainer(const ATM& atm):_atm(atm),_pin(){}
+    explicit InputContainer(const ATM& atm):_atm(atm),_pin(){}
 
     ~InputContainer(){}
 

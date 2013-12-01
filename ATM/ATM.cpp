@@ -28,7 +28,8 @@ const QString ATM::SELECT_CARD_BY_NUMBER = \
     FROM cards INNER JOIN clients ON cards.client_id=clients.id \
     WHERE cards.card_number=\"%1\"";
 const QString ATM::DEACTIVATE_CARD = "UPDATE cards SET active=0 WHERE card_number=\"%1\"";
-//const QString ATM::UPDATE_CARD_BALANCE = ...;
+const QString ATM::WITHDRAW_FUNDS = "UPDATE cards SET balance=balance-(%2) WHERE card_number=\"%1\"";
+const QString ATM::UPLOAD_FUNDS = "UPDATE cards SET balance=balance+(%2) WHERE card_number=\"%1\"";
 //etc.
 
 ATM::ATM(ITerminal* terminal):
@@ -299,11 +300,15 @@ void ATM::deactivateCard()
 {
     assert(_database.isOpen() && "FATAL: Unexpected call to deactivateCard()!!!");
     // Deactivate card
-    QSqlQuery query(DEACTIVATE_CARD.arg(_current_card->_card_number), _database);
-    if(!query.isActive())
+    try
     {
-        // Failed to execute deactivation query. Seize the card anyway.
-        throw DatabaseQueryFailedException(true);
+        executeQuery(DEACTIVATE_CARD.arg(_current_card->_card_number));
+    }
+    catch(DatabaseQueryFailedException& e)
+    {
+        // In this case we have to seize card, so change exception and rethrow.
+        e.setSeizeCard(true);
+        throw e;
     }
 }
 
@@ -387,4 +392,77 @@ void ATM::topMenu(QString selectedService)
         //    assert(false && "FATAL: Unhandled ATM state in processInput()!!!");
             break;
     }*/
+}
+
+ATM::TransactionResult ATM::withdrawFunds(double amount)
+{
+    assert(_current_card && _database.isOpen() && "FATAL: Unexpected call to ATM::withdrawFunds()!!!");
+    updateCardData();
+    if(amount > _current_card->_balance)
+    {
+        return TransactionResult::TRANS_NOT_ENOUGH_FUNDS;
+    }
+    executeQuery(WITHDRAW_FUNDS.arg(_current_card->_card_number, QString::number(amount)));
+    return TransactionResult::TRANS_SUCCESS;
+}
+
+bool ATM::cardExists(QString cardNumber)
+{
+    assert(_database.isOpen() && "FATAL: Did not establish DB connection before calling ATM::cardExists()!!!");
+    QSqlQuery query(SELECT_CARD_BY_NUMBER.arg(cardNumber), _database);
+    if(!query.isActive())
+    {
+        throw DatabaseQueryFailedException();
+    }
+
+    // Attempt to retreive the first (and only) entry
+    if(!query.first())
+    {
+        return false;
+    }
+    return true;
+}
+
+// TODO: Make it safer using SQL commits.
+ATM::TransactionResult ATM::transferFunds(QString targetCardNumber, double amount)
+{
+    assert(_current_card && _database.isOpen() && "FATAL: Unexpected call to ATM::withdrawFunds()!!!");
+    updateCardData();
+    if(amount > _current_card->_balance)
+    {
+        return TransactionResult::TRANS_NOT_ENOUGH_FUNDS;
+    }
+    if(!cardExists(targetCardNumber))
+    {
+        return TransactionResult::TRANS_INVALID_RECEIVER;
+    }
+    TransactionResult result = TRANS_FAIL;
+    bool rollback_needed = false;
+    executeQuery(WITHDRAW_FUNDS.arg(_current_card->_card_number, QString::number(amount)));
+    // Money withdrawn, need to roll back in case of second query failure.
+    rollback_needed = true;
+    try
+    {
+        executeQuery(UPLOAD_FUNDS.arg(targetCardNumber));
+        result = TRANS_SUCCESS;
+    }
+    catch(const DatabaseQueryFailedException&)
+    {
+        // Rollback changes
+        executeQuery(UPLOAD_FUNDS.arg(_current_card->_card_number));
+    }
+    return result;
+}
+
+// TODO: Separate from this class entirely?
+void ATM::executeQuery(QString sqlQuery)     // throws DatabaseQueryFailedException
+{
+    assert(_database.isOpen() && "FATAL: Did not establish DB connection before calling ATM::executeQuery()!!!");
+    // TODO: SQL injection protection?
+    QSqlQuery query(sqlQuery, _database);
+    if(!query.isActive())
+    {
+        // Failed to execute deactivation query.
+        throw DatabaseQueryFailedException();
+    }
 }
