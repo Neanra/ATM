@@ -135,7 +135,7 @@ private:
 
     enum ATMState {POWER_OFF = 0, NO_CARD = 1, PENDING_PIN = 2, TOP_MENU = 3};
     enum MenuState {TOP = 0, SHOW_BALANCE_METHOD = 1, DISPLAY_BALANCE = 2,
-                  PRINT_BALANCE = 3, WITHDRAW = 4, TRANSFER = 5, MOBILE = 6, MENU_ENDING = 7};
+                  PRINT_BALANCE = 3, WITHDRAW = 4, TRANSFER = 5, MOBILE = 6};
     enum TransactionResult
     {
         TRANS_SUCCESS           = 0,
