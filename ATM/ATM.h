@@ -185,6 +185,7 @@ public:
     // Output text to the display
     virtual void showText(QString text) = 0;
     virtual void showCardState(QString text) = 0;
+    virtual void appendText(QString text) = 0;
 };
 
 // Entities responsible for user input must implement this interface
@@ -304,6 +305,7 @@ public:
         if (_atm._state == ATM::PENDING_PIN)
         {
             addNextToArray(input);
+            _atm._display->appendText("*");
         }
         else if(_atm._state == ATM::TOP_MENU)
         {
@@ -339,15 +341,5 @@ private:
         return true;
     }
 };
-
-/*class ATM::CardState {
-private:
-    enum cardState {ABSENT = 0, INSERTED = 1, EJECTED = 2, SEIZED = 3};
-    static cardState _cardState;
-public:
-    const cardState& getCardState () const{
-        return _cardState;
-    }
-};*/
 
 #endif // ATM_H

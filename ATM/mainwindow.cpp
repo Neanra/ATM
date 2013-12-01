@@ -124,61 +124,51 @@ void MainWindow::on_enterBtn_clicked()
 void MainWindow::on_pushButton_1_clicked()
 {
     keyboard->acceptInput('1');
-    appendText("*");
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
     keyboard->acceptInput('2');
-    appendText("*");
 }
 
 void MainWindow::on_pushButton_3_clicked()
 {
     keyboard->acceptInput('3');
-    appendText("*");
 }
 
 void MainWindow::on_pushButton_4_clicked()
 {
     keyboard->acceptInput('4');
-    appendText("*");
 }
 
 void MainWindow::on_pushButton_5_clicked()
 {
     keyboard->acceptInput('5');
-    appendText("*");
 }
 
 void MainWindow::on_pushButton_6_clicked()
 {
     keyboard->acceptInput('6');
-    appendText("*");
 }
 
 void MainWindow::on_pushButton_7_clicked()
 {
     keyboard->acceptInput('7');
-    appendText("*");
 }
 
 void MainWindow::on_pushButton_8_clicked()
 {
     keyboard->acceptInput('8');
-    appendText("*");
 }
 
 void MainWindow::on_pushButton_9_clicked()
 {
     keyboard->acceptInput('9');
-    appendText("*");
 }
 
 void MainWindow::on_pushButton_0_clicked()
 {
     keyboard->acceptInput('0');
-    appendText("*");
 }
 
 void MainWindow::on_pushButton_backspace_clicked()
