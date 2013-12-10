@@ -610,3 +610,11 @@ void ATM::executeQuery(QString sqlQuery)     // throws DatabaseQueryFailedExcept
         throw DatabaseQueryFailedException();
     }
 }
+
+// Process CANCEL button press
+void ATM::cancelOperation()
+{
+    if(_current_card != NULL) {
+        onCardEjected(EJECT_SUCCESS);
+    }
+}

@@ -49,8 +49,7 @@ public:
     void powerOn();
     void powerOff();
 
-    void showBalance();
-    void printBalance();
+    void cancelOperation();
 
     inline bool isOn()
     {
@@ -94,6 +93,8 @@ private:
     // Mark currently inserted card as inactive in DB
     void deactivateCard();
 
+    void showBalance();
+    void printBalance();
     void requestPin(bool afterError = false);
     void requestAmount();
     void requestRecepient();

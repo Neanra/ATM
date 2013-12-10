@@ -56,33 +56,28 @@ void MainWindow::disablePrinter()
 
 void MainWindow::disableKeyboard()
 {
-    this->ui->pushButton_1->setEnabled(false);
-    this->ui->pushButton_2->setEnabled(false);
-    this->ui->pushButton_3->setEnabled(false);
-    this->ui->pushButton_4->setEnabled(false);
-    this->ui->pushButton_5->setEnabled(false);
-    this->ui->pushButton_6->setEnabled(false);
-    this->ui->pushButton_7->setEnabled(false);
-    this->ui->pushButton_8->setEnabled(false);
-    this->ui->pushButton_9->setEnabled(false);
-    this->ui->pushButton_0->setEnabled(false);
-    this->ui->pushButton_backspace->setEnabled(false);
+    setKeyboardButtonsEnabled(false);
 }
 
 void MainWindow::enableKeyboard()
 {
-    this->ui->pushButton_1->setEnabled(true);
-    this->ui->pushButton_2->setEnabled(true);
-    this->ui->pushButton_3->setEnabled(true);
-    this->ui->pushButton_4->setEnabled(true);
-    this->ui->pushButton_5->setEnabled(true);
-    this->ui->pushButton_6->setEnabled(true);
-    this->ui->pushButton_7->setEnabled(true);
-    this->ui->pushButton_8->setEnabled(true);
-    this->ui->pushButton_9->setEnabled(true);
-    this->ui->pushButton_0->setEnabled(true);
-    this->ui->pushButton_0->isEnabled();
-    this->ui->pushButton_backspace->setEnabled(true);
+    setKeyboardButtonsEnabled(true);
+}
+
+void MainWindow::setKeyboardButtonsEnabled(bool enabled)
+{
+    this->ui->pushButton_1->setEnabled(enabled);
+    this->ui->pushButton_2->setEnabled(enabled);
+    this->ui->pushButton_3->setEnabled(enabled);
+    this->ui->pushButton_4->setEnabled(enabled);
+    this->ui->pushButton_5->setEnabled(enabled);
+    this->ui->pushButton_6->setEnabled(enabled);
+    this->ui->pushButton_7->setEnabled(enabled);
+    this->ui->pushButton_8->setEnabled(enabled);
+    this->ui->pushButton_9->setEnabled(enabled);
+    this->ui->pushButton_0->setEnabled(enabled);
+    this->ui->pushButton_backspace->setEnabled(enabled);
+    this->ui->cancelButton->setEnabled(enabled);
 }
 
 void  MainWindow::enableEnterBtn(){
@@ -204,4 +199,9 @@ void MainWindow::on_powerBtn_clicked()
         disableKeyboard();
         disablePrinter();
     }
+}
+
+void MainWindow::on_cancelButton_clicked()
+{
+    _connected_atm->cancelOperation();
 }

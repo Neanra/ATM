@@ -60,6 +60,9 @@ public:
 
     void showCardState(QString cardState);
 
+private:
+    void setKeyboardButtonsEnabled(bool enabled);
+
 private slots:
     void on_enterBtn_clicked();
     void on_pushButton_1_clicked();
@@ -75,6 +78,7 @@ private slots:
     void on_pushButton_backspace_clicked();
     bool isEnabledKeyboard();
     void on_powerBtn_clicked();
+    void on_cancelButton_clicked();
 };
 
 #endif // MAINWINDOW_H
